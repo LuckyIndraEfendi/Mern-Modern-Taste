@@ -1,38 +1,40 @@
 import { useState } from "react";
 import { Link ,useNavigate} from "react-router-dom";
 import axios from "axios";
+import { useDispatch ,useSelector} from "react-redux";
+import { signInStart,signInSuccess,signInFailure,signInClear } from "../redux/feature/userSlice";
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(null);
+  const {isLoading,error} = useSelector(state => state.user)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleSignIn = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
   const handlePostData = async (e) => {
-    setIsLoading(true);
     e.preventDefault();
+    dispatch(signInStart())
     try {
       const res = await axios.post(
         "http://localhost:8080/api/v1/auth/sign-in",
         formData,{
           headers : {
-            "Content-Type" : "application/json"
-          }
-        }
+            "Content-Type" : "application/json",
+          },
+          withCredentials : true
+        },
+        
       );
       const data = await res.data;
       if (data.status === false) {
-        setIsLoading(false);
-        return;
+        return dispatch(signInFailure(data.response.data.message))
       }
-      setIsLoading(false);
-      setIsError(null);
+      dispatch(signInSuccess(data))
       navigate("/")
     } catch (err) {
-      setIsError(err.message);
-    } finally {
-      setIsLoading(false);
+      dispatch(signInFailure(err.response.data.message));
+    }finally{
+      dispatch(signInClear())
     }
   };
   return (
@@ -74,7 +76,7 @@ const SignIn = () => {
           Sign up
         </Link>
       </div>
-      {isError && <p>{isError}</p>}
+      {error && <p className="text-red-600">{error}</p>}
     </div>
   );
 };

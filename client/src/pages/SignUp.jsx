@@ -17,7 +17,8 @@ const SignUp = () => {
         "http://localhost:8080/api/v1/auth/sign-up",
         formData,{
           headers : {
-            "Content-Type" : "application/json"
+            "Content-Type" : "application/json",
+            "Allow-access-control-origin" : "*"
           }
         }
       );
@@ -30,7 +31,7 @@ const SignUp = () => {
       setIsError(null);
       navigate("/sign-in")
     } catch (err) {
-      setIsError(err.message);
+      setIsError(err.response.data);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +83,7 @@ const SignUp = () => {
           Sign in
         </Link>
       </div>
-      {isError && <p>{isError}</p>}
+      {isError && <p>{isError.message}</p>}
     </div>
   );
 };

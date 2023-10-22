@@ -19,7 +19,9 @@ app.get("/", (req, res) => {
 
 app.use(
   cors({
-    origin: "*",
+    origin: process.env.REACT_ORIGIN,
+    credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
 
