@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link ,useNavigate} from "react-router-dom";
 import axios from "axios";
 const SignUp = () => {
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(null);
+  const navigate = useNavigate()
   const handleSignUp = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -14,7 +15,11 @@ const SignUp = () => {
     try {
       const res = await axios.post(
         "http://localhost:8080/api/v1/auth/sign-up",
-        formData
+        formData,{
+          headers : {
+            "Content-Type" : "application/json"
+          }
+        }
       );
       const data = await res.data;
       if (data.status === false) {
@@ -23,6 +28,7 @@ const SignUp = () => {
       }
       setIsLoading(false);
       setIsError(null);
+      navigate("/sign-in")
     } catch (err) {
       setIsError(err.message);
     } finally {
@@ -76,7 +82,7 @@ const SignUp = () => {
           Sign in
         </Link>
       </div>
-      <p>{isError && isError}</p>
+      {isError && <p>{isError}</p>}
     </div>
   );
 };

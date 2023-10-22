@@ -1,6 +1,6 @@
-import { Sequelize } from "sequelize";
-import dbConfig from "../config/dbConfig.js"
-const sequelize = new Sequelize(dbConfig);;
+import dbConfig from "../config/dbConfig.js";
+const sequelize = dbConfig;
+
 const checkDatabaseConnection = async (req, res, next) => {
   try {
     await sequelize.authenticate();
